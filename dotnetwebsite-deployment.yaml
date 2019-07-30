@@ -1,0 +1,17 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: windocks-dotnetwebsite
+spec:
+  replicas: 1  
+  template:
+    metadata:
+      labels:
+        app: dotnetwebsite
+    spec:
+      containers:
+        - image: "windocks/windocks-redis-demo-dotnetwebsite:1.0.1"
+          imagePullPolicy: Always
+          name: dotnetwebsite
+          ports:
+            - containerPort: 5001

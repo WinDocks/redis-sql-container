@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: windocks-sql-proxy-secure 
+  labels:
+    app: sqlproxy-secure 
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: sqlproxy-secure 
+        tier: frontend
+    spec:
+      containers:
+      - name: sqlproxy-secure-app 
+        image: windocks/windocks-sql-server-proxy:1.5.0 
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: "/usr/src/app/ssl"
+            name: proxy-secret-ssl
+            readOnly: true
+        ports:
+        - name: tcp-proxy
+          containerPort: 3087
+        envFrom:
+          - secretRef:
+              name: proxy-secrets
+        env:
+          - name: WINDOCKS_REQUIRED_HOSTNAME
+            value: "34.220.44.23"
+          - name: WINDOCKS_REQUIRED_IMAGE_NAME
+            value: "redisdemo2"
+          - name: WINDOCKS_SQL_PROXY_OPTIONAL_LISTENING_PORT
+            value: "3087"
+          - name: WINDOCKS_SQL_PROXY_OPTIONAL_LOCAL_HOSTNAME_FOR_TLS
+            value: ""
+          - name: WINDOCKS_SQL_PROXY_OPTIONAL_TLS
+            value: "false"
+      volumes:
+        - name: proxy-secret-ssl
+          secret:
+            secretName: proxy-secret-ssl
